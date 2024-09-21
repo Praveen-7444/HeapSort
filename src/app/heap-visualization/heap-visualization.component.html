@@ -1,0 +1,83 @@
+<div class="container">
+    <!-- Control Panel Section -->
+    <div class="control-panel">
+      <h2>Heap Sort Controls</h2>
+      
+      <!-- Input Section -->
+      <div class="input-section">
+        <label for="numbersInput" id="num">Enter numbers (max 10)</label>
+        <input 
+          type="text" 
+          id="numbersInput" 
+          [(ngModel)]="numbersInput" 
+          placeholder="e.g., 10, 20, 30" 
+          (input)="validateInput()"
+        />
+        <button (click)="generateRandomNumbers()">Generate Random Numbers</button>
+      </div>
+  
+      <!-- Heap Type Section -->
+      <div class="heap-type-section">
+        <label>Select Heap Type:</label>
+        <div>
+          <input 
+            type="radio" 
+            id="minHeap" 
+            [(ngModel)]="heapType" 
+            name="heapType" 
+            value="min" 
+          />
+          <label for="minHeap">Min Heap</label>
+  
+          <input 
+            type="radio" 
+            id="maxHeap" 
+            [(ngModel)]="heapType" 
+            name="heapType" 
+            value="max" 
+          />
+          <label for="maxHeap">Max Heap</label>
+        </div>
+      </div>
+  
+      <!-- Visualization Type Section -->
+      <div class="visualization-type-section">
+        <label>Select Visualization Type:</label>
+        <div>
+          <input 
+            type="radio" 
+            id="array" 
+            [(ngModel)]="representationType" 
+            name="representationType" 
+            value="array" 
+          />
+          <label for="array">Array</label>
+  
+          <input 
+            type="radio" 
+            id="graph" 
+            [(ngModel)]="representationType" 
+            name="representationType" 
+            value="graph" 
+          />
+          <label for="graph">Graph</label>
+        </div>
+      </div>
+  
+      <!-- Visualize Button -->
+      <div class="visualize-button">
+        <button (click)="visualizeHeap()">Visualize Heap</button>
+      </div>
+    </div>
+  
+    <!-- Visualization Section -->
+    <div class="visualization-section">
+      <h2>Heap Visualization</h2>
+      <div class="visualization-area">
+        <!-- The graph or array visual will be rendered here -->
+        <p *ngIf="representationType === 'array'">Array visualization will appear here</p>
+        <p *ngIf="representationType === 'graph'">Graph visualization will appear here</p>
+      </div>
+    </div>
+  </div>
+  
