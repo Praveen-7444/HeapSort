@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ArrayVisualizationComponent } from '../array-visualization/array-visualization.component';
 
 @Component({
   selector: 'HeapVisualization',
   standalone: true,
-  imports: [FormsModule, CommonModule, ArrayVisualizationComponent],
+  imports: [FormsModule, CommonModule],
   templateUrl: './heap-visualization.component.html',
   styleUrl: './heap-visualization.component.css'
 })
@@ -14,7 +13,7 @@ export class HeapVisualizationComponent {
   numbersInput: string = '';
   heapType: string = 'min';  // Default heap type
   representationType: string = 'array';  // Default visualization type
-  numbersArray: number[] = [];
+
   // Validate and clean the input if necessary
   validateInput() {
     const numArray = this.numbersInput.split(',').map(num => num.trim());
@@ -48,8 +47,5 @@ export class HeapVisualizationComponent {
     console.log('Numbers:', this.numbersInput);
     console.log('Heap Type:', this.heapType);
     console.log('Visualization Type:', this.representationType);
-
-    this.numbersArray = this.numbersInput.split(',').map(num => parseInt(num.trim(), 10));
-    console.log('Array:', this.numbersArray);
   }
 }
