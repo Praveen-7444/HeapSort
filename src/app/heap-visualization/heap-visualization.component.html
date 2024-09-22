@@ -75,7 +75,9 @@
       <h2>Heap Visualization</h2>
       <div class="visualization-area">
         <!-- The graph or array visual will be rendered here -->
-        <p *ngIf="representationType === 'array'">Array visualization will appear here</p>
+        <!-- <p *ngIf="representationType === 'array'">Array visualization will appear here</p> -->
+          <app-array-visualization *ngIf="representationType === 'array'" [inputArray]="numbersArray" [heapType]="heapType"></app-array-visualization>
+        
         <p *ngIf="representationType === 'graph'">Graph visualization will appear here</p>
       </div>
     </div>

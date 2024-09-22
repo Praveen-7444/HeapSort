@@ -1,0 +1,18 @@
+<div class="array-visualization">
+    <h2 class="input">Input Array</h2>
+    <div class="input-array">
+      <div   *ngFor="let number of displayInputArray; let i = index" class="number-box">
+        {{ number }}
+        <div class="index">{{ i }}</div>
+      </div>
+    </div>
+  
+    <h2 class="sort">Sorted Array</h2>
+    <div class="sorted-array">
+      <div  *ngFor="let number of displaySortedArray; let i = index" class="number-box">
+        {{ number }}
+        <div class="index">{{ i }}</div>
+      </div>
+    </div>
+  </div>
+  
