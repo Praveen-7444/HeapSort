@@ -26,6 +26,7 @@
             [(ngModel)]="heapType" 
             name="heapType" 
             value="min" 
+            [disabled]="isAnimationRunning" 
           />
           <label for="minHeap">Min Heap</label>
   
@@ -35,6 +36,7 @@
             [(ngModel)]="heapType" 
             name="heapType" 
             value="max" 
+            [disabled]="isAnimationRunning" 
           />
           <label for="maxHeap">Max Heap</label>
         </div>
@@ -50,6 +52,7 @@
             [(ngModel)]="representationType" 
             name="representationType" 
             value="array" 
+            [disabled]="isAnimationRunning" 
           />
           <label for="array">Array</label>
   
@@ -59,6 +62,7 @@
             [(ngModel)]="representationType" 
             name="representationType" 
             value="graph" 
+            [disabled]="isAnimationRunning" 
           />
           <label for="graph">Graph</label>
         </div>
@@ -91,9 +95,9 @@
         <!-- The graph or array visual will be rendered here -->
         <!-- <p *ngIf="representationType === 'array'">Array visualization will appear here</p> -->
         <!-- <p>Array visualization will appear here</p> -->
-        <app-array-visualization  *ngIf="representationType === 'array'"  [heapType]="heapType" [inputArray]="numbersArray"></app-array-visualization>
+        <app-array-visualization  *ngIf="representationType === 'array'"  [heapType]="heapType" [inputArray]="numbersArray" [visualizationSpeed]="visualizationSpeed"  (animationComplete)="onAnimationComplete()"></app-array-visualization>
         <!-- <p *ngIf="representationType === 'graph'">Graph visualization will appear here</p> -->
-        <app-graph-visualization *ngIf="representationType === 'graph'" [data]="numbersArray"></app-graph-visualization>
+        <app-graph-visualization *ngIf="representationType === 'graph'" [data]="numbersArray"  [heapType]="heapType"   [visualizationSpeed]="visualizationSpeed"  (animationComplete)="onAnimationComplete()"></app-graph-visualization>
       </div>
     </div>
   </div>
