@@ -16,7 +16,6 @@
     text-align: center;
     line-height: 40px;
     position: relative;
-    border-radius: 5px;
     border: .5px solid;
     transition: all 0.5s ease; /* Smooth transition for animations */
   }

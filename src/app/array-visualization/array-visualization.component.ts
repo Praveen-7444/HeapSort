@@ -74,6 +74,10 @@ export class ArrayVisualizationComponent implements OnChanges {
       .text((d: any) => d.value);
   }
 
+
+  private clearSvg(): void {
+    this.svgHeap.selectAll('*').remove(); // Remove all child elements of the SVG group
+  }
   async startHeapSort() {
     this.isSorting = true;
     const n = this.array.length;
@@ -95,6 +99,7 @@ export class ArrayVisualizationComponent implements OnChanges {
     // Handle the last remaining element
     this.sortedArray.unshift(this.array.pop()!);
     this.updateSortedArray();
+    this.clearSvg();
     this.isSorting = false;
     this.animationComplete.emit();
   }
@@ -210,7 +215,7 @@ export class ArrayVisualizationComponent implements OnChanges {
       .attr('width', 40)
       .attr('height', 40)
       .attr('y', 20)
-      .attr('fill', 'lightgreen')
+      .attr('fill', 'green')
       .attr('x', (d: any, i: number) => i * 50);
 
     enterRects.merge(rects)
@@ -220,7 +225,8 @@ export class ArrayVisualizationComponent implements OnChanges {
       .attr('y', 45)
       .attr('text-anchor', 'middle')
       .text((d: any) => d.value)
-      .attr('x', (d: any, i: number) => i * 50 + 20);
+      .attr('x', (d: any, i: number) => i * 50 + 20)
+      .style('fill','#fff');
 
     enterTexts.merge(texts)
       .text((d: any) => d.value)
