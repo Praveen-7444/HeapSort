@@ -1,0 +1,68 @@
+.node {
+    stroke: #fff;
+    stroke-width: 3px;
+}
+.link {
+    fill: none;
+    stroke: #aaa;
+    stroke-width: 2px;
+}
+.highlight-parent {
+    fill: orange;
+}
+.highlight-child {
+    fill: yellow;
+}
+.input-array, .sorted-array {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+/* Ensure the sorted boxes are green and aligned properly */
+.sorted-array .array-box {
+    background-color: green;
+    color: white;
+}
+
+/* General box styling for both input and sorted arrays */
+.array-box {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    border: 1px solid #000;
+    text-align: center;
+    line-height: 40px;
+    margin: 5px;
+    border-radius: 5px;
+    transition: all 1s ease;
+}
+
+/* Align and center the tree in the middle of the container */
+#heapGraph {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    width: 100%;  /* Ensure the graph takes up the full width of its container */
+}
+
+/* Styling for button and controls */
+button {
+    margin: 20px;
+    padding: 10px;
+}
+
+#heapStatus {
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+#speedControl {
+    margin: 20px;
+}
+
+h2 {
+    text-align: center;
+}

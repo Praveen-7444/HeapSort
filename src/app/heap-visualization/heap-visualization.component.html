@@ -5,7 +5,7 @@
       
       <!-- Input Section -->
       <div class="input-section">
-        <label for="numbersInput" id="num">Enter numbers (max 10)</label>
+        <label for="numbersInput" id="num">Enter numbers (max 15)</label>
         <input 
           type="text" 
           id="numbersInput" 
@@ -63,6 +63,20 @@
           <label for="graph">Graph</label>
         </div>
       </div>
+
+      <div class="speed-control-section">
+        <label for="speedControl">Adjust Visualization Speed:</label>
+        <input 
+          type="range" 
+          id="speedControl" 
+          [(ngModel)]="visualizationSpeed" 
+          min="100" 
+          max="3000" 
+          step="100" 
+        />
+        <p>Current Speed: {{ visualizationSpeed }}ms</p>
+      </div>
+      
   
       <!-- Visualize Button -->
       <div class="visualize-button">
@@ -78,7 +92,8 @@
         <!-- <p *ngIf="representationType === 'array'">Array visualization will appear here</p> -->
         <!-- <p>Array visualization will appear here</p> -->
         <app-array-visualization  *ngIf="representationType === 'array'"  [heapType]="heapType" [inputArray]="numbersArray"></app-array-visualization>
-        <p *ngIf="representationType === 'graph'">Graph visualization will appear here</p>
+        <!-- <p *ngIf="representationType === 'graph'">Graph visualization will appear here</p> -->
+        <app-graph-visualization *ngIf="representationType === 'graph'" [data]="numbersArray"></app-graph-visualization>
       </div>
     </div>
   </div>
