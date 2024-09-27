@@ -1,47 +1,33 @@
 .array-visualization {
     margin: 20px;
-    text-align: center; /* Center the headings */
-    min-width: 80%;
-    min-height: 80%;
-    margin-top: 40px;
-    margin-bottom: 30px;
-}
-
-.input-array, .sorted-array {
+  }
+  
+  .input-array, .sorted-array {
     display: flex;
     justify-content: center;
     margin: 10px 0;
-    margin-bottom:60px;
-}
-
-.input, .sort{
-    margin:20px,0px;
-}
-
-.number-box {
-    width: 50px;
-    height: 50px;
-    margin: 0 5px;
+  }
+  
+  .number-box {
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    margin: 5px;
+    text-align: center;
+    line-height: 40px;
+    position: relative;
+    border: .5px solid;
+    transition: all 0.5s ease; /* Smooth transition for animations */
+  }
+  
+  h2{
+    text-align: center;
+  }
+  
+  .array-visualization{
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: white; /* Adjust background color */
-    border: 1px solid #000;
-    position: relative;
-    border-radius: 5px; /* Optional: add rounded corners */
-}
-
-.index {
-    position: absolute;
-    bottom: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 12px;
-}
-
-/* Optional: Add a background color to the whole component */
-.array-visualization {
-    padding: 20px;
-    border-radius: 10px; /* Rounded corners for the container */
-    height: 50vh;
-}
+    flex-direction: column;
+    gap: 20px;
+  }
