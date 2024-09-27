@@ -13,27 +13,37 @@ interface Node {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './graph-visualization.component.html',
-  styleUrls: ['./graph-visualization.component.css']
+  styleUrls: ['./graph-visualization.component.css'],
 })
 export class GraphVisualizationComponent implements OnInit, OnChanges {
   @Input() data: number[] = [];
-  @Input() heapType: string = 'min';  // Default to 'min' heap, can also be 'max'
-  @Input() visualizationSpeed: number = 1000;  // Default speed for visualization
+  @Input() heapType: string = 'min'; // Default to 'min' heap, can also be 'max'
+  @Input() visualizationSpeed: number = 1000; // Default speed for visualization
   inputArray: number[] = [];
   binaryTreeArray: number[] = [];
   sortedArray: number[] = [];
   private svg: any;
   private treeGroup: any;
-  private width = 800;
+  private sortedSvg: any;  // SVG for sorted array
+  private width = 900;
   private height = 400;
   private nodeRadius = 20;
-  private treeLayout = d3.tree<Node>().size([this.width - 200, this.height - 200]);  // Fixed: explicitly typed with Node
+  private treeLayout = d3.tree<Node>().size([this.width - 200, this.height - 200]);
   private treeData: Node | null = null;
-  private animationDelay = 2000;
-  @Output() animationComplete = new EventEmitter<void>();  // Event emitted when animation completes
+  @Output() animationComplete = new EventEmitter<void>();
 
-  // Variables to track the indices of the parent and children being compared
-  private compareIndices: { parent: number | null, leftChild: number | null, rightChild: number | null } = { parent: null, leftChild: null, rightChild: null };
+  visualizationStarted: boolean = false; // Initially false, will be set to true when visualization starts
+ // Define the time and space complexity
+ timeComplexity: string = 'O(n log n)';
+ spaceComplexity: string = 'O(1)'; // In-place sorting algorithm
+
+ message: string = '';  // Status message to show before or during visualization
+
+  private compareIndices: { parent: number | null, leftChild: number | null, rightChild: number | null } = {
+    parent: null,
+    leftChild: null,
+    rightChild: null,
+  };
 
   constructor() {}
 
@@ -47,23 +57,37 @@ export class GraphVisualizationComponent implements OnInit, OnChanges {
       this.binaryTreeArray = [...this.data];
       this.sortedArray = [];
       this.treeData = this.arrayToTreeData(this.binaryTreeArray);
-      
-      // Ensure treeData is not null before drawing the tree
-      if (this.treeData) {
+
+      if (this.treeData && d3.select('#heapGraph').node()) {
         this.drawTree(this.treeData);
       }
-      
+
+      this.visualizationStarted = true; // Visualization is now starting
       this.startHeapSortAnimation();
     }
   }
 
   private createSvg(): void {
-    this.svg = d3.select('#heapGraph')
+    this.svg = d3
+      .select('#heapGraph')
       .attr('width', this.width)
       .attr('height', this.height);
 
-    this.treeGroup = this.svg.append('g')
-      .attr('transform', 'translate(0, 40)');
+    if (!this.svg.node()) {
+      console.error('SVG element #heapGraph not found');
+      return;
+    }
+
+    this.treeGroup = this.svg.append('g').attr('transform', 'translate(0, 40)');
+
+    this.sortedSvg = d3.select('#sortedArraySvg')
+      .attr('width', this.width)
+      .attr('height', 100);
+
+    if (!this.sortedSvg.node()) {
+      console.error('SVG element #sortedArraySvg not found');
+      return;
+    }
   }
 
   private arrayToTreeData(array: number[]): Node | null {
@@ -74,17 +98,16 @@ export class GraphVisualizationComponent implements OnInit, OnChanges {
       const leftChildIdx = 2 * index + 1;
       const rightChildIdx = 2 * index + 2;
       if (leftChildIdx < array.length) {
-        node.children.push(nodes[leftChildIdx]);  // Fixed: children is now properly typed as Node[]
+        node.children.push(nodes[leftChildIdx]);
       }
       if (rightChildIdx < array.length) {
-        node.children.push(nodes[rightChildIdx]);  // Fixed: children is now properly typed as Node[]
+        node.children.push(nodes[rightChildIdx]);
       }
     });
     return nodes[0];
   }
 
   private drawTree(treeData: Node): void {
-    // Use the fixed type for d3.hierarchy<Node>()
     const root = d3.hierarchy<Node>(treeData);
     const links = this.treeLayout(root).links();
     const nodes = root.descendants();
@@ -92,9 +115,11 @@ export class GraphVisualizationComponent implements OnInit, OnChanges {
     this.treeGroup.selectAll('g').remove();
     this.treeGroup.selectAll('.link').remove();
 
-    this.treeGroup.selectAll('.link')
+    this.treeGroup
+      .selectAll('.link')
       .data(links)
-      .enter().append('line')
+      .enter()
+      .append('line')
       .attr('class', 'link')
       .attr('x1', (d: d3.HierarchyPointLink<Node>) => d.source.x)
       .attr('y1', (d: d3.HierarchyPointLink<Node>) => d.source.y)
@@ -103,68 +128,63 @@ export class GraphVisualizationComponent implements OnInit, OnChanges {
       .attr('stroke', '#aaa')
       .attr('stroke-width', 2);
 
-    const nodeGroup = this.treeGroup.selectAll('.node')
+    const nodeGroup = this.treeGroup
+      .selectAll('.node')
       .data(nodes)
-      .enter().append('g')
+      .enter()
+      .append('g')
       .attr('transform', (d: d3.HierarchyPointNode<Node>) => `translate(${d.x},${d.y})`);
 
-    nodeGroup.append('circle')
+    nodeGroup
+      .append('circle')
       .attr('class', 'node')
       .attr('r', this.nodeRadius)
       .attr('fill', (d: d3.HierarchyPointNode<Node>) => this.getNodeColor(d))
       .attr('stroke', '#000')
       .attr('stroke-width', 1);
 
-    nodeGroup.append('text')
+    nodeGroup
+      .append('text')
       .attr('dy', 4)
       .attr('text-anchor', 'middle')
       .text((d: d3.HierarchyPointNode<Node>) => d.data.value.toString());
   }
 
   private getNodeColor(d: d3.HierarchyPointNode<Node>): string {
-    // Color parent node orange, children yellow, and others white
     if (d.data.id === this.compareIndices.parent) {
-      return 'orange';  // Parent node
+      return 'orange';
     } else if (d.data.id === this.compareIndices.leftChild || d.data.id === this.compareIndices.rightChild) {
-      return 'yellow';  // Child nodes
+      return 'yellow';
     } else {
-      return 'white';  // Other nodes
+      return 'white';
     }
-  }
-
-   // Method to clear all elements from the SVG once sorting is done
-   private clearSvg(): void {
-    this.treeGroup.selectAll('*').remove(); // Remove all child elements of the SVG group
   }
 
   private async startHeapSortAnimation() {
     let array = [...this.binaryTreeArray];
     let n = array.length;
 
-    // Build the heap
     for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
       await this.heapify(array, n, i);
     }
 
-    // Extract elements from heap one by one
     for (let i = n - 1; i > 0; i--) {
       await this.swapElements(array, 0, i);
-
-      // Move the last element from heap to sorted array
-      this.sortedArray.unshift(array.pop()!);  
+      this.sortedArray.unshift(array[i]);
+      array.pop();
       this.updateSortedArrayUI();
       this.updateHeapUI();
-
       await this.heapify(array, i, 0);
     }
 
-    // Handle the last element in the heap
-    this.sortedArray.unshift(array[0]);
-    this.binaryTreeArray = [];  // Empty the heap array after the last element is moved
-    this.updateSortedArrayUI();
-    this.updateHeapUI();  // Redraw the tree as empty
-    this.clearSvg();
+    if (array.length > 0) {
+      this.sortedArray.unshift(array[0]);
+    }
 
+    this.binaryTreeArray = [];
+    this.updateSortedArrayUI();
+    this.updateHeapUI();
+    this.clearSvg();
     this.animationComplete.emit();
   }
 
@@ -173,15 +193,7 @@ export class GraphVisualizationComponent implements OnInit, OnChanges {
     let left = 2 * i + 1;
     let right = 2 * i + 2;
 
-    // Set the nodes being compared
-    this.compareIndices = { parent: i, leftChild: left < n ? left : null, rightChild: right < n ? right : null };
-    if (this.treeData) {
-      this.drawTree(this.treeData);  // Update the tree with the new colors
-    }
-    await this.sleep(this.visualizationSpeed);
-
     if (this.heapType === 'min') {
-      // Min heap comparison logic (smallest at the top)
       if (left < n && array[left] < array[largestOrSmallest]) {
         largestOrSmallest = left;
       }
@@ -189,7 +201,6 @@ export class GraphVisualizationComponent implements OnInit, OnChanges {
         largestOrSmallest = right;
       }
     } else {
-      // Max heap comparison logic (largest at the top)
       if (left < n && array[left] > array[largestOrSmallest]) {
         largestOrSmallest = left;
       }
@@ -198,7 +209,12 @@ export class GraphVisualizationComponent implements OnInit, OnChanges {
       }
     }
 
-    // Swap and continue heapifying if necessary
+    // Update compareIndices to highlight the parent and children being compared
+    this.compareIndices = { parent: i, leftChild: left < n ? left : null, rightChild: right < n ? right : null };
+    this.drawTree(this.treeData!); // Redraw the tree to highlight nodes
+
+    await this.sleep(this.visualizationSpeed);
+
     if (largestOrSmallest !== i) {
       await this.swapElements(array, i, largestOrSmallest);
       await this.heapify(array, n, largestOrSmallest);
@@ -211,13 +227,13 @@ export class GraphVisualizationComponent implements OnInit, OnChanges {
     this.binaryTreeArray = [...array];
     this.treeData = this.arrayToTreeData(this.binaryTreeArray)!;
 
-    // Highlight swapped elements
-    this.compareIndices = { parent: i, leftChild: null, rightChild: null };  // Highlight only the swapped parent
+    // Update compareIndices for highlighting the swapped nodes
+    this.compareIndices = { parent: j, leftChild: null, rightChild: null };
     this.drawTree(this.treeData);
 
     await this.sleep(this.visualizationSpeed);
 
-    // Reset compared nodes after swap
+    // Reset compareIndices after the swap
     this.compareIndices = { parent: null, leftChild: null, rightChild: null };
     this.drawTree(this.treeData);
   }
@@ -227,24 +243,61 @@ export class GraphVisualizationComponent implements OnInit, OnChanges {
   }
 
   private updateSortedArrayUI() {
-    const sortedContainer = document.getElementById('sortedArray');
-    if (sortedContainer) {
-      sortedContainer.innerHTML = '';  // Clear the sorted array container
+    const rectWidth = 40;
+    const rectHeight = 40;
+    const spacing = 20; // Add extra spacing between elements
 
-      // Add each element in the sorted array to the UI
-      this.sortedArray.forEach(value => {
-        const box = document.createElement('div');
-        box.className = 'array-box sorted-box';  // Add sorted-box class for styling
-        box.innerText = value.toString();
-        sortedContainer.appendChild(box);
-      });
+    if (!this.sortedSvg.node()) {
+      console.error('Cannot update sorted array: #sortedArraySvg not found');
+      return;
     }
+
+    const sortedRects = this.sortedSvg.selectAll('rect')
+      .data(this.sortedArray, (d: number) => d);
+
+    sortedRects.exit().remove();
+
+    sortedRects.enter()
+      .append('rect')
+      .attr('x', (d: number, i: number) => i * (rectWidth + spacing) + 10) // Add spacing between elements
+      .attr('y', 20)
+      .attr('width', rectWidth)
+      .attr('height', rectHeight)
+      .attr('fill', 'lightgreen')
+      .merge(sortedRects)
+      .transition()
+      .duration(this.visualizationSpeed)
+      .attr('x', (d: number, i: number) => i * (rectWidth + spacing) + 10); // Apply the same spacing during the transition
+
+    const textSelection = this.sortedSvg.selectAll('text')
+      .data(this.sortedArray, (d: number) => d);
+
+    textSelection.exit().remove();
+
+    textSelection.enter()
+      .append('text')
+      .attr('x', (d: number, i: number) => i * (rectWidth + spacing) + 30) // Add spacing to the text elements
+      .attr('y', 45)
+      .attr('text-anchor', 'middle')
+      .text((d: number) => d)
+      .merge(textSelection)
+      .transition()
+      .duration(this.visualizationSpeed)
+      .attr('x', (d: number, i: number) => i * (rectWidth + spacing) + 30); // Apply the same spacing during the transition
   }
 
   private updateHeapUI() {
-    this.treeData = this.arrayToTreeData(this.binaryTreeArray)!;  // Update the tree data
-    if (this.treeData) {
-      this.drawTree(this.treeData);  // Redraw the tree with the remaining elements
+    if (!this.treeData || !d3.select('#heapGraph').node()) {
+      console.error('Cannot update heap UI: SVG element not found');
+      return;
     }
+    this.treeData = this.arrayToTreeData(this.binaryTreeArray)!;
+    if (this.treeData) {
+      this.drawTree(this.treeData);
+    }
+  }
+
+  private clearSvg(): void {
+    this.treeGroup.selectAll('*').remove();
   }
 }

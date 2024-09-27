@@ -66,3 +66,11 @@ button {
 h2 {
     text-align: center;
 }
+
+.sorted-box .array-box {
+    background-color: lightgreen;
+  }
+
+  svg {
+    margin-top: 10px;
+  }
