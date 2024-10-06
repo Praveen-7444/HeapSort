@@ -1,9 +1,7 @@
+<p [ngStyle]="{'display': !visualizationStarted ? 'block' : 'none'}" style="font-weight:bold; font-size: larger;">Time Complexity: {{ timeComplexity }}</p>
+<p [ngStyle]="{'display': !visualizationStarted ? 'block' : 'none'}" style="font-weight:bold; font-size: larger;">Space Complexity: {{ spaceComplexity }}</p>
 
-<p *ngIf="!visualizationStarted">Time Complexity: {{ timeComplexity }}</p>
-<p *ngIf="!visualizationStarted">Space Complexity: {{ spaceComplexity }}</p>
-
-
-<div *ngIf="visualizationStarted">
+<div [ngStyle]="{'display': visualizationStarted ? 'block' : 'none'}">
   <h2>Input Array</h2>
   <div id="inputArray" class="input-array">
     <div *ngFor="let num of inputArray" class="array-box">{{ num }}</div>

@@ -52,6 +52,7 @@ export class GraphVisualizationComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    
     if (changes['data'] && this.data.length) {
       this.inputArray = [...this.data];
       this.binaryTreeArray = [...this.data];
@@ -263,7 +264,7 @@ export class GraphVisualizationComponent implements OnInit, OnChanges {
       .attr('y', 20)
       .attr('width', rectWidth)
       .attr('height', rectHeight)
-      .attr('fill', 'lightgreen')
+      .attr('fill', 'green')
       .merge(sortedRects)
       .transition()
       .duration(this.visualizationSpeed)
@@ -283,7 +284,8 @@ export class GraphVisualizationComponent implements OnInit, OnChanges {
       .merge(textSelection)
       .transition()
       .duration(this.visualizationSpeed)
-      .attr('x', (d: number, i: number) => i * (rectWidth + spacing) + 30); // Apply the same spacing during the transition
+      .attr('x', (d: number, i: number) => i * (rectWidth + spacing) + 30)
+      .style('fill','#fff'); // Apply the same spacing during the transition
   }
 
   private updateHeapUI() {

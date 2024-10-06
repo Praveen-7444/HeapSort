@@ -15,6 +15,11 @@ export class ArrayVisualizationComponent implements OnChanges {
   @Input() visualizationSpeed: number = 1500; // Slowed down animation for visibility
   @Output() animationComplete = new EventEmitter<void>();
 
+  visualizationStarted: boolean = false; // Initially false, will be set to true when visualization starts
+ // Define the time and space complexity
+ timeComplexity: string = 'O(n log n)';
+ spaceComplexity: string = 'O(1)'; // In-place sorting algorithm
+
   array: number[] = [];
   sortedArray: number[] = [];
   isSorting: boolean = false;
@@ -27,6 +32,7 @@ export class ArrayVisualizationComponent implements OnChanges {
     if (changes['inputArray'] && this.inputArray.length) {
       this.array = [...this.inputArray]; // Copy input array for heap operations
       this.sortedArray = [];
+      this.visualizationStarted = true; // Visualization is now starting
       this.initializeSvg();
       this.visualizeInputArray(); // Show input array
       this.startHeapSort();

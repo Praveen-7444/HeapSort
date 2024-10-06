@@ -1,4 +1,7 @@
-<div class="array-visualization">
+<p [ngStyle]="{'display': !visualizationStarted ? 'block' : 'none'}" style="font-weight:bold; font-size: larger;">Time Complexity: {{ timeComplexity }}</p>
+<p [ngStyle]="{'display': !visualizationStarted ? 'block' : 'none'}" style="font-weight:bold; font-size: larger;">Space Complexity: {{ spaceComplexity }}</p>
+
+<div class="array-visualization" [ngStyle]="{'display': visualizationStarted ? 'block' : 'none'}" >
 
   <!-- Input Array Section -->
   <h2 class="input">Input Array</h2>
